@@ -1,0 +1,11 @@
+{
+    "plugins": [
+			"syntax-dynamic-import",
+			"transform-async-to-generator",
+			"transform-class-properties",
+			"transform-decorators-legacy",
+			"transform-export-extensions",
+			"transform-object-rest-spread"
+	],
+    "presets": ["react"]
+}
