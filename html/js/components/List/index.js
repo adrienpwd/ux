@@ -24,7 +24,6 @@ export default class MyList extends PureComponent {
 		 hideIndexRow: false,
 		 overscanRowCount: 10,
 		 rowHeight: 40,
-		 rowCount: 1000,
 		 scrollToIndex: undefined,
 		 sortBy,
 		 sortDirection,
@@ -39,59 +38,57 @@ export default class MyList extends PureComponent {
 		const rowGetter = ({ index }) => this._getDatum(sortedList, index);
 
 		return (
-			<div>
+			<div className={styles.badass}>
 				<h1>List example</h1>
-				<AutoSizer disableHeight>
-            {({ width }) =>
-              <Table
-                ref="Table"
-                disableHeader={false}
-                headerClassName={styles.headerColumn}
-                headerHeight={30}
-                height={270}
-                overscanRowCount={10}
-                rowClassName={this._rowClassName}
-                rowHeight={30}
-                rowGetter={rowGetter}
-                rowCount={data.size}
-                sort={this._sort}
-                sortBy={"index"}
-                sortDirection={"ASC"}
-                width={width} >
-                <Column
-                  label="Index"
-                  cellDataGetter={({ rowData }) => rowData.get('index')}
-                  dataKey="index"
-                  width={60} />
-								<Column
-                  label="Name"
-                  cellDataGetter={({ rowData }) => rowData.get('name')}
-                  dataKey="name"
-                  width={60} />
-								<Column
-                  label="Company"
-                  cellDataGetter={({ rowData }) => rowData.get('company')}
-                  dataKey="company"
-                  width={60} />
-              </Table>}
-          </AutoSizer>
+				<div className={styles.listContainer}>
+					<AutoSizer disableHeight={true}>
+							{({width}) =>
+								<Table
+									ref="Table"
+									disableHeader={false}
+									headerClassName={styles.headerColumn}
+									headerHeight={30}
+									height={400}
+									overscanRowCount={10}
+									rowClassName={this._rowClassName}
+									rowHeight={30}
+									rowGetter={rowGetter}
+									rowCount={data.size}
+									sort={this._sort}
+									sortBy={"index"}
+									sortDirection={"ASC"}
+									width={width} >
+									<Column
+										label="Index"
+										dataKey="index"
+										width={80} />
+									<Column
+										dataKey="name"
+										label="Name"
+										width={200} />
+									<Column
+										dataKey="company"
+										label="Company"
+										flexGrow={1}
+										width={200} />
+							</Table>}
+					</AutoSizer>
+				</div>
 			</div>
 		);
 	}
 
+	_rowClassName({ index }) {
+    if (index < 0) {
+      return [styles.row, styles.headerRow];
+    } else {
+      return index % 2 === 0 ? [styles.row, styles.evenRow] : [styles.row, styles.oddRow];
+    }
+  }
+
 	_getDatum(list, index) {
     return list.get(index % list.size);
   }
-
-	_rowRenderer = ({ index, key, style }) => {
-		const row = data.get(index);
-
-		return (
-			<div key={index} style={style}>
-				{row.get('name')}
-			</div>
-		);
-	};
 
 	_sortList({ sortBy, sortDirection }) {
     return data;
