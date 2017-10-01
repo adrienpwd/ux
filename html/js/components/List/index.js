@@ -6,59 +6,58 @@ import {
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
 import {Map} from 'immutable';
-	import {setSortBy} from './../../actions/AppActionCreators'
+import {
+	fetchUsers,
+	setQueryString,
+	setSortBy
+} from './../../actions/AppActionCreators'
 import styles from './List.less';
+
+const HEADER_HEIGHT = 30;
+const ROW_HEIGHT = 30;
+const NUMBER_OF_ROWS = 15;
+const LIST_HEIGHT = ROW_HEIGHT * NUMBER_OF_ROWS;
+const OVER_SCAN = 4;
 
 export class MyList extends PureComponent {
 	static displayName = "List";
 
-	constructor(props, context) {
-	 super(props, context);
-
-	 const sortDirection = "ASC";
-	 const rowHeight = 30;
-
-	 this.state = {
-		 disableHeader: false,
-		 headerHeight: 30,
-		 height: rowHeight * 15,
-		 hideIndexRow: false,
-		 overscanRowCount: 10,
-		 rowHeight,
-		 scrollToIndex: undefined,
-		 sortDirection,
-		 sortedList: props.data,
-		 useDynamicRowHeight: false
-	 };
-
- }
+	componentDidMount () {
+		const {fetchUsers} = this.props;
+		fetchUsers(1000);
+	}
 
 	render () {
 		const {
-			height,
-			rowHeight
-		} = this.state;
-
-		const {
 			data,
+			queryString,
 			sortBy,
 			sortDirection
 		} = this.props;
 
 		return (
 			<div>
+				<label>
+					Filter
+					<input
+						type="text"
+						name="name"
+						onChange={this.handleInputChange}
+						value={queryString} />
+				</label>
+
 				<AutoSizer disableHeight={true}>
 						{({width}) =>
 							<Table
 								ref="Table"
 								disableHeader={false}
 								headerClassName={styles.headerColumn}
-								headerHeight={30}
-								height={height}
-								overscanRowCount={10}
-								rowClassName={this._rowClassName}
-								rowHeight={rowHeight}
-								rowGetter={({index}) => this._getDatum(data, index)}
+								headerHeight={HEADER_HEIGHT}
+								height={LIST_HEIGHT}
+								overscanRowCount={OVER_SCAN}
+								rowClassName={this._setRowClassName}
+								rowHeight={ROW_HEIGHT}
+								rowGetter={({index}) => this._getRow(data, index)}
 								rowCount={data.size}
 								sort={this._sort}
 								sortBy={sortBy}
@@ -95,7 +94,21 @@ export class MyList extends PureComponent {
 		);
 	}
 
-	_rowClassName({ index }) {
+	handleInputChange = (event) => {
+		const {setQueryString} = this.props;
+
+		setQueryString(event.target.value);
+	};
+
+	_filterList = (queryString) => {
+		const {
+			filterList
+		} = this.props;
+
+		filterList(queryString);
+	};
+
+	_setRowClassName({index}) {
     if (index < 0) {
       return [styles.row, styles.headerRow];
     } else {
@@ -103,7 +116,7 @@ export class MyList extends PureComponent {
     }
   };
 
-	_getDatum = (list, index) => list.get(index % list.size);
+	_getRow = (list, index) => list.get(index % list.size);
 
 	_sort = ({sortBy, sortDirection}) => this.props.setSortBy(sortBy, sortDirection);
 
@@ -112,12 +125,15 @@ export class MyList extends PureComponent {
 // Setting up the props that come from reducers through connect
 const mapStateToProps = (state) => ({
 		data: state.ListReducer.get('data', Map()),
+		queryString: state.ListReducer.get('queryString', ''),
 		sortBy: state.ListReducer.get('sortBy', 'name'),
 		sortDirection: state.ListReducer.get('sortDirection', 'ASC')
 });
 
 // All the Actions
 const mapDispatchToProps = {
+	fetchUsers,
+	setQueryString,
 	setSortBy
 };
 

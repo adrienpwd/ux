@@ -10,7 +10,10 @@ const app = document.getElementById('root');
 const middleware = applyMiddleware(thunk);
 const enhancer = compose(middleware);
 
-const store = createStore(rootReducer, enhancer);
+const store = createStore(
+	rootReducer,
+	enhancer
+);
 
 ReactDOM.render(
 	<Provider store={store}>
