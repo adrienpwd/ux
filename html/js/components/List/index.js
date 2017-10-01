@@ -4,76 +4,93 @@ import {
 	Table
 } from 'react-virtualized';
 import React, {PureComponent} from 'react';
-import data from './../../../../data';
+import {connect} from 'react-redux';
+import {Map} from 'immutable';
+	import {setSortBy} from './../../actions/AppActionCreators'
 import styles from './List.less';
 
-export default class MyList extends PureComponent {
+export class MyList extends PureComponent {
 	static displayName = "List";
 
 	constructor(props, context) {
 	 super(props, context);
 
-	 const sortBy = "index";
 	 const sortDirection = "ASC";
-	 const sortedList = this._sortList({ sortBy, sortDirection });
+	 const rowHeight = 30;
 
 	 this.state = {
 		 disableHeader: false,
 		 headerHeight: 30,
-		 height: 270,
+		 height: rowHeight * 15,
 		 hideIndexRow: false,
 		 overscanRowCount: 10,
-		 rowHeight: 40,
+		 rowHeight,
 		 scrollToIndex: undefined,
-		 sortBy,
 		 sortDirection,
-		 sortedList,
+		 sortedList: props.data,
 		 useDynamicRowHeight: false
 	 };
 
  }
 
 	render () {
-		const {sortedList} = this.state;
-		const rowGetter = ({ index }) => this._getDatum(sortedList, index);
+		const {
+			height,
+			rowHeight
+		} = this.state;
+
+		const {
+			data,
+			sortBy,
+			sortDirection
+		} = this.props;
 
 		return (
-			<div className={styles.badass}>
-				<h1>List example</h1>
-				<div className={styles.listContainer}>
-					<AutoSizer disableHeight={true}>
-							{({width}) =>
-								<Table
-									ref="Table"
-									disableHeader={false}
-									headerClassName={styles.headerColumn}
-									headerHeight={30}
-									height={400}
-									overscanRowCount={10}
-									rowClassName={this._rowClassName}
-									rowHeight={30}
-									rowGetter={rowGetter}
-									rowCount={data.size}
-									sort={this._sort}
-									sortBy={"index"}
-									sortDirection={"ASC"}
-									width={width} >
-									<Column
-										label="Index"
-										dataKey="index"
-										width={80} />
-									<Column
-										dataKey="name"
-										label="Name"
-										width={200} />
-									<Column
-										dataKey="company"
-										label="Company"
-										flexGrow={1}
-										width={200} />
-							</Table>}
-					</AutoSizer>
-				</div>
+			<div>
+				<AutoSizer disableHeight={true}>
+						{({width}) =>
+							<Table
+								ref="Table"
+								disableHeader={false}
+								headerClassName={styles.headerColumn}
+								headerHeight={30}
+								height={height}
+								overscanRowCount={10}
+								rowClassName={this._rowClassName}
+								rowHeight={rowHeight}
+								rowGetter={({index}) => this._getDatum(data, index)}
+								rowCount={data.size}
+								sort={this._sort}
+								sortBy={sortBy}
+								sortDirection={sortDirection}
+								width={width} >
+								<Column
+									className={styles.column}
+									dataKey="name"
+									label="Name"
+									width={200} />
+								<Column
+									className={styles.column}
+									dataKey="company"
+									label="Company"
+									width={200} />
+								<Column
+									className={styles.column}
+									dataKey="email"
+									label="E-mail"
+									width={250} />
+								<Column
+									className={styles.column}
+									dataKey="phone"
+									label="Phone"
+									width={250} />
+								<Column
+									className={styles.column}
+									dataKey="age"
+									label="Age"
+									width={60} />
+						</Table>}
+				</AutoSizer>
 			</div>
 		);
 	}
@@ -84,13 +101,24 @@ export default class MyList extends PureComponent {
     } else {
       return index % 2 === 0 ? [styles.row, styles.evenRow] : [styles.row, styles.oddRow];
     }
-  }
+  };
 
-	_getDatum(list, index) {
-    return list.get(index % list.size);
-  }
+	_getDatum = (list, index) => list.get(index % list.size);
 
-	_sortList({ sortBy, sortDirection }) {
-    return data;
-  }
+	_sort = ({sortBy, sortDirection}) => this.props.setSortBy(sortBy, sortDirection);
+
 }
+
+// Setting up the props that come from reducers through connect
+const mapStateToProps = (state) => ({
+		data: state.ListReducer.get('data', Map()),
+		sortBy: state.ListReducer.get('sortBy', 'name'),
+		sortDirection: state.ListReducer.get('sortDirection', 'ASC')
+});
+
+// All the Actions
+const mapDispatchToProps = {
+	setSortBy
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(MyList);

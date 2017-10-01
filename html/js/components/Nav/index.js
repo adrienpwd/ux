@@ -1,5 +1,4 @@
 import React, {PureComponent} from 'react';
-import {connect} from 'react-redux';
 import {Link} from 'react-router-dom';
 import {routeCodes} from '../../routes';
 import styles from './style.less';
