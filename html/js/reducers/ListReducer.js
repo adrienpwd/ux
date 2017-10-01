@@ -3,13 +3,12 @@ import {
 	List,
 	Map
 } from 'immutable';
-import data from './../../../data.js';
 
 const INITIAL_STATE = fromJS({
-	data: fromJS(data),
+	data: Map(),
 	isFetchingUsers: false,
 	isFetchedUsers: false,
-	originalData: fromJS(data),
+	originalData: Map(),
 	queryString: "",
 	sortBy: "name",
 	sortDirection: "ASC"
@@ -41,11 +40,30 @@ const filterList = (list, queryString) => {
 };
 
 const sortList = (list, sortBy, sortDirection) => {
-	return list
-		.sortBy(record => record.get(sortBy))
-		.update(list => (sortDirection === "DESC" ? list.reverse() : list));
+	let sortedList;
+
+	switch(sortBy) {
+		case "name":
+			sortedList = list.sortBy(record => record.getIn(['name', 'last']));
+			return updateList(sortedList, sortDirection);
+		case "email":
+			sortedList = list.sortBy(record => record.get('email'));
+			return updateList(sortedList, sortDirection);
+		case "cell":
+			sortedList = list.sortBy(record => record.get('cell'));
+			return updateList(sortedList, sortDirection);
+		case "location":
+			sortedList = list.sortBy(record => record.getIn(['location', 'city']));
+			return updateList(sortedList, sortDirection);
+		case "dob":
+			sortedList = list.sortBy(record => record.get('dob'));
+			return updateList(sortedList, sortDirection);
+		default:
+			return list;
+	};
 };
 
+const updateList = (list, sortDirection) => list.update((myList) => (sortDirection === "DESC" ? myList.reverse() : myList));
 
 const onSetQueryString = (state, {queryString}) => {
 	return state.merge({
@@ -65,14 +83,13 @@ const onSetSortBy = (state, {sortBy, sortDirection}) => {
 const onFetchUsers = (state) => state.set('isFetchingUsers', true);
 
 const onFetchUsersSuccess = (state, {users}) => {
-	console.log(fromJS(users).flatten(true).toJS());
-	return state;
-	// return state.merge({
-	// 	data: fromJS(users),
-	// 	originalData: fromJS(users),
-	// 	isFetchingUsers: false,
-	// 	isFetchedUsers: true
-	// });
+	console.log("fetch users");
+	return state.merge({
+		data: fromJS(users),
+		originalData: fromJS(users),
+		isFetchingUsers: false,
+		isFetchedUsers: true
+	});
 };
 
 export const ListReducer = (state = INITIAL_STATE, action = {}) => {

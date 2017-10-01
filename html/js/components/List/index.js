@@ -11,6 +11,7 @@ import {
 	setQueryString,
 	setSortBy
 } from './../../actions/AppActionCreators'
+import moment from 'moment';
 import styles from './List.less';
 
 const HEADER_HEIGHT = 30;
@@ -64,38 +65,70 @@ export class MyList extends PureComponent {
 								sortDirection={sortDirection}
 								width={width} >
 								<Column
+									cellRenderer={this._renderFullName}
 									className={styles.column}
 									dataKey="name"
-									label="Name"
+									label="Name (sort by lastname)"
 									width={200} />
 								<Column
 									className={styles.column}
-									dataKey="company"
-									label="Company"
-									width={200} />
+									dataKey="nat"
+									disableSort={true}
+									label="Nat."
+									width={80} />
 								<Column
 									className={styles.column}
 									dataKey="email"
 									label="E-mail"
-									width={250} />
+									width={260} />
 								<Column
 									className={styles.column}
-									dataKey="phone"
+									dataKey="cell"
 									label="Phone"
-									width={250} />
+									width={150} />
 								<Column
+									cellRenderer={this._renderFullLocation}
 									className={styles.column}
-									dataKey="age"
-									label="Age"
-									width={60} />
+									dataKey="location"
+									label="Location (sort by city)"
+									width={450} />
+								<Column
+									cellRenderer={this._renderDob}
+									className={styles.column}
+									dataKey="dob"
+									label="Born"
+									width={120} />
 						</Table>}
 				</AutoSizer>
 			</div>
 		);
 	}
 
+	_renderFullName = ({cellData}) => `${cellData.get('title')} ${cellData.get('first')} ${cellData.get('last')}`
+
+	_renderFullLocation = ({cellData}) => {
+		const street = this._getStreet(cellData);
+		const city = this._getCity(cellData);
+		const postalCode = this._getPostCode(cellData);
+		const state = this._getState(cellData);
+
+		return `${street} ${city} ${postalCode} ${state}`;
+	};
+
+	_getStreet = (cellData) => cellData.get('street');
+
+	_getCity = (cellData) => cellData.get('city');
+
+	_getPostCode = (cellData) => cellData.get('postcode');
+
+	_getState = (cellData) => cellData.get('state');
+
+	_renderDob = ({cellData}) => moment(cellData).format('YYYY-MM-DD');
+
 	handleInputChange = (event) => {
-		const {setQueryString} = this.props;
+		const {
+			setQueryString
+		} = this.props;
 
 		setQueryString(event.target.value);
 	};
