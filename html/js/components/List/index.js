@@ -15,8 +15,8 @@ import MDSpinner from "react-md-spinner";
 import moment from 'moment';
 import styles from './List.less';
 
-const HEADER_HEIGHT = 30;
-const ROW_HEIGHT = 30;
+const HEADER_HEIGHT = 40;
+const ROW_HEIGHT = 40;
 const NUMBER_OF_ROWS = 15;
 const LIST_HEIGHT = ROW_HEIGHT * NUMBER_OF_ROWS;
 const OVER_SCAN = 4;

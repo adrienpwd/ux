@@ -12,16 +12,19 @@
 	align-items: center;
 	cursor: pointer;
 	display: flex;
+	outline: none;
 	padding: 8px;
 }
 
 .headerRow {
 	background-color: #1A2327;
 	color: #FFF;
+	padding-right: 0 !important;
 }
 
 .row {
 	display: flex;
+	padding-right: 0 !important;
 }
 
 .column {
@@ -42,3 +45,7 @@
 	justify-content: center;
 	margin-top: 150px;
 }
+
+svg, .ReactVirtualized__Table__sortableHeaderIcon {fill: #FFF}
+
+div, .ReactVirtualized__Table__Grid {outline: none}
