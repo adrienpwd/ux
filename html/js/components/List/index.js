@@ -11,6 +11,7 @@ import {
 	setQueryString,
 	setSortBy
 } from './../../actions/AppActionCreators'
+import MDSpinner from "react-md-spinner";
 import moment from 'moment';
 import styles from './List.less';
 
@@ -24,28 +25,58 @@ export class MyList extends PureComponent {
 	static displayName = "List";
 
 	componentDidMount () {
-		const {fetchUsers} = this.props;
-		fetchUsers(1000);
+		const {
+			fetchUsers,
+			isFetchedUsers,
+			isFetchingUsers
+		} = this.props;
+
+		if (!isFetchingUsers && !isFetchedUsers) {
+			fetchUsers(1000);
+		};
 	}
 
 	render () {
 		const {
 			data,
+			fetchUsersError,
+			isFetchedUsers,
+			isFetchingUsers,
 			queryString,
 			sortBy,
 			sortDirection
 		} = this.props;
 
+		if (fetchUsersError && fetchUsersError.length) {
+			return (
+				<div className={styles.spinnerContainer}>
+					{error}
+				</div>
+			);
+		};
+
+		if (!isFetchedUsers || isFetchingUsers) {
+			return (
+				<div className={styles.spinnerContainer}>
+					<MDSpinner
+						color1="#1A2327"
+						color2="#757b7d"
+						color3="#FFF"
+						size={150} />
+				</div>
+			);
+		};
+
 		return (
 			<div>
-				<label>
-					Filter
-					<input
-						type="text"
-						name="name"
-						onChange={this.handleInputChange}
-						value={queryString} />
-				</label>
+				<input
+					className={styles.filterInput}
+					type="text"
+					name="name"
+					onChange={this.handleInputChange}
+					placeholder="Filter List"
+					value={queryString} />
+				<span>{data.size} result(s)</span>
 
 				<AutoSizer disableHeight={true}>
 						{({width}) =>
@@ -68,7 +99,7 @@ export class MyList extends PureComponent {
 									cellRenderer={this._renderFullName}
 									className={styles.column}
 									dataKey="name"
-									label="Name (sort by lastname)"
+									label="Name"
 									width={200} />
 								<Column
 									className={styles.column}
@@ -90,7 +121,7 @@ export class MyList extends PureComponent {
 									cellRenderer={this._renderFullLocation}
 									className={styles.column}
 									dataKey="location"
-									label="Location (sort by city)"
+									label="Location"
 									width={450} />
 								<Column
 									cellRenderer={this._renderDob}
@@ -158,6 +189,9 @@ export class MyList extends PureComponent {
 // Setting up the props that come from reducers through connect
 const mapStateToProps = (state) => ({
 		data: state.ListReducer.get('data', Map()),
+		fetchUsersError: state.ListReducer.get('fetchUsersError'),
+		isFetchedUsers: state.ListReducer.get('isFetchedUsers'),
+		isFetchingUsers: state.ListReducer.get('isFetchingUsers'),
 		queryString: state.ListReducer.get('queryString', ''),
 		sortBy: state.ListReducer.get('sortBy', 'name'),
 		sortDirection: state.ListReducer.get('sortDirection', 'ASC')

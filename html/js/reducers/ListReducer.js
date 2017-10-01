@@ -6,6 +6,7 @@ import {
 
 const INITIAL_STATE = fromJS({
 	data: Map(),
+	fetchUsersError: null,
 	isFetchingUsers: false,
 	isFetchedUsers: false,
 	originalData: Map(),
@@ -23,7 +24,15 @@ const filterList = (list, queryString) => {
 		list.forEach((record) => {
 			let match = false;
 			record.some((info) => {
-				if (String(info).indexOf(queryString) > -1) {
+				if (record && record.size) {
+					record.some((subRecord) => {
+						if (lookup(queryString, subRecord).length) {
+							match = true;
+							return true;
+						}
+					});
+				}
+				if (lookup(queryString, record).length) {
 					match = true;
 					return true;
 				}
@@ -37,6 +46,11 @@ const filterList = (list, queryString) => {
 	}
 
 	return filteredList;
+};
+
+const lookup = (test, record) => {
+	const regex = new RegExp(test, "g");
+	return String(record).match(regex) || [];
 };
 
 const sortList = (list, sortBy, sortDirection) => {
@@ -83,14 +97,15 @@ const onSetSortBy = (state, {sortBy, sortDirection}) => {
 const onFetchUsers = (state) => state.set('isFetchingUsers', true);
 
 const onFetchUsersSuccess = (state, {users}) => {
-	console.log("fetch users");
 	return state.merge({
-		data: fromJS(users),
+		data: sortList(fromJS(users), "name", "ASC"),
 		originalData: fromJS(users),
 		isFetchingUsers: false,
 		isFetchedUsers: true
 	});
 };
+
+const onFetchUsersError = (state) => state.set('fetchUsersError', error);
 
 export const ListReducer = (state = INITIAL_STATE, action = {}) => {
 	const {payload, type} = action;
