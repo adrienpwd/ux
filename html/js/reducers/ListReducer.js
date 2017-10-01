@@ -97,6 +97,7 @@ const onSetSortBy = (state, {sortBy, sortDirection}) => {
 const onFetchUsers = (state) => state.set('isFetchingUsers', true);
 
 const onFetchUsersSuccess = (state, {users}) => {
+	console.log(users);
 	return state.merge({
 		data: sortList(fromJS(users), "name", "ASC"),
 		originalData: fromJS(users),

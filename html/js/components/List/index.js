@@ -16,8 +16,8 @@ import moment from 'moment';
 import styles from './List.less';
 
 const HEADER_HEIGHT = 40;
-const ROW_HEIGHT = 40;
-const NUMBER_OF_ROWS = 15;
+const ROW_HEIGHT = 80;
+const NUMBER_OF_ROWS = 8;
 const LIST_HEIGHT = ROW_HEIGHT * NUMBER_OF_ROWS;
 const OVER_SCAN = 4;
 
@@ -95,6 +95,12 @@ export class MyList extends PureComponent {
 								sortBy={sortBy}
 								sortDirection={sortDirection}
 								width={width} >
+							<Column
+								cellRenderer={this._renderFullProfilePic}
+								className={styles.column}
+								dataKey="picture"
+								label="Picture"
+								width={100} />
 								<Column
 									cellRenderer={this._renderFullName}
 									className={styles.column}
@@ -134,6 +140,19 @@ export class MyList extends PureComponent {
 			</div>
 		);
 	}
+
+	_renderFullProfilePic = ({cellData}) => {
+		return (
+			<div>
+				<img
+					className={styles.profilePic}
+					src={`${cellData.get('medium')}`}
+					alt="Smiley face"
+					height={"68"}
+					width={"68"} />
+			</div>
+		);
+	};
 
 	_renderFullName = ({cellData}) => `${cellData.get('title')} ${cellData.get('first')} ${cellData.get('last')}`
 
