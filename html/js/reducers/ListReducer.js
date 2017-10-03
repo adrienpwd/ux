@@ -9,11 +9,29 @@ const INITIAL_STATE = fromJS({
 	fetchUsersError: null,
 	isFetchingUsers: false,
 	isFetchedUsers: false,
+	lookupFields: {
+		nat: true,
+		email: true,
+		name: true,
+		cell: true,
+		phone: true,
+		dob: true,
+		location: true
+	},
 	originalData: Map(),
 	queryString: "",
 	sortBy: "name",
 	sortDirection: "ASC"
 });
+
+const lookupFields = [
+	"nat",
+	"email",
+	"name",
+	"cell",
+	"dob",
+	"location"
+];
 
 const filterList = (list, queryString) => {
 	let filteredList = List();
@@ -22,24 +40,24 @@ const filterList = (list, queryString) => {
 
 	if (queryString && queryString.length) {
 		list.forEach((record) => {
-			let match = false;
-			record.some((info) => {
-				if (record && record.size) {
-					record.some((subRecord) => {
-						if (lookup(queryString, subRecord).length) {
-							match = true;
+			lookupFields.some((field) => {
+				const node = record.get(field);
+
+				if (lookup(queryString, node).length) {
+					filteredList = filteredList.push(record)
+					return true;
+				}
+
+				if (node && node.size) {
+					node.some((childNode) => {
+						if (lookup(queryString, childNode).length) {
+							filteredList = filteredList.push(record)
 							return true;
 						}
 					});
-				}
-				if (lookup(queryString, record).length) {
-					match = true;
-					return true;
-				}
+				};
+
 			});
-			if (match) {
-				filteredList = filteredList.push(record)
-			};
 		});
 	} else {
 		filteredList = list;

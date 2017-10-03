@@ -32,7 +32,7 @@ export class MyList extends PureComponent {
 		} = this.props;
 
 		if (!isFetchingUsers && !isFetchedUsers) {
-			fetchUsers(1000);
+			fetchUsers(5000);
 		};
 	}
 
@@ -42,7 +42,6 @@ export class MyList extends PureComponent {
 			fetchUsersError,
 			isFetchedUsers,
 			isFetchingUsers,
-			queryString,
 			sortBy,
 			sortDirection
 		} = this.props;
@@ -69,15 +68,10 @@ export class MyList extends PureComponent {
 
 		return (
 			<div>
-				<input
-					className={styles.filterInput}
-					type="text"
-					name="name"
-					onChange={this.handleInputChange}
-					placeholder="Filter List"
-					value={queryString} />
-				<span>{data.size} result(s)</span>
-
+				<div className={styles.checkboxesContainer}>
+					{this._renderFilter()}
+					{this._renderCheckboxes()}
+				</div>
 				<AutoSizer disableHeight={true}>
 						{({width}) =>
 							<Table
@@ -141,16 +135,53 @@ export class MyList extends PureComponent {
 		);
 	}
 
-	_renderFullProfilePic = ({cellData}) => {
+	_renderFilter = () => {
+		const {
+			data,
+			queryString
+		} = this.props;
+
 		return (
 			<div>
+				<input
+					className={styles.filterInput}
+					type="text"
+					name="name"
+					onChange={this._handleInputChange}
+					placeholder="Filter List"
+					value={queryString} />
+				<span>
+					{data.size} result(s)
+				</span>
+			</div>
+		);
+	};
+
+	_renderCheckboxes = () => {
+		const fields = ["picture", "name", "nat", "email", "cell", "location", "dob"];
+
+		return fields.map((field) => {
+			return (
+				<div key={field}>
+					<input
+						name={field}
+						onChange={this._handleCheckboxeChange}
+						type="checkbox"
+						value={field} />
+					{field}
+				</div>
+			);
+		});
+	};
+
+	_renderFullProfilePic = ({cellData}) => {
+		return (
 				<img
 					className={styles.profilePic}
 					src={`${cellData.get('medium')}`}
-					alt="Smiley face"
+					alt="profile picture"
 					height={"68"}
 					width={"68"} />
-			</div>
 		);
 	};
 
@@ -175,18 +206,18 @@ export class MyList extends PureComponent {
 
 	_renderDob = ({cellData}) => moment(cellData).format('YYYY-MM-DD');
 
-	handleInputChange = (event) => {
-		const {
-			setQueryString
-		} = this.props;
+	_handleInputChange = (event) => {
+		const {setQueryString} = this.props;
 
 		setQueryString(event.target.value);
 	};
 
+	_handleCheckboxeChange = (event) => {
+		console.log(event.target.value);
+	};
+
 	_filterList = (queryString) => {
-		const {
-			filterList
-		} = this.props;
+		const {filterList} = this.props;
 
 		filterList(queryString);
 	};
