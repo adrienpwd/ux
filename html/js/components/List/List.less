@@ -1,5 +1,57 @@
-.checkboxesContainer {
+@electricBlue: #00B0FF;
+
+.controlsContainer {
+  align-items: center;
+  background-color: #333645;
+  border-bottom: solid 1px #5b5e6a;
+	color: white;
 	display: flex;
+  padding: 8px 0;
+}
+
+.filterInput {
+	background-color: #333645;
+	border-bottom: solid 1px grey;
+	border-width: 0 0 1px 0;
+	color: #FFF;
+	font-size: 14px;
+	height: 24px;
+	margin: 0 8px 0 0;
+	outline: none;
+	padding-left: 24px;
+	width: 200px;
+
+	transition: border-color 0.4s ease;
+
+	&:focus {
+		border-color: @electricBlue
+	}
+}
+
+.searchIcon {
+	fill: #FFF;
+	position: relative;
+	left: 24px;
+}
+
+.nbResults {
+	font-size: 12px;
+	font-weight: 100;
+	margin-right: 8px;
+}
+
+.checkboxContainer {
+	margin: 0 8px;
+
+	&Input {
+		cursor: pointer;
+		margin-right: 4px;
+	}
+
+	&Label {
+		font-size: 14px;
+		font-weight: 100
+	}
 }
 
 .evenRow {
@@ -14,8 +66,8 @@
 
 .headerColumn {
 	align-items: center;
-	cursor: pointer;
 	display: flex;
+	font-weight: 100;
 	outline: none;
 	padding: 8px;
 }
@@ -48,11 +100,6 @@
 	justify-content: center;
 }
 
-.filterInput {
-	margin: 0 8px 8px 0;
-	outline: none;
-}
-
 .spinner {
 	margin: auto;
 	top: 250px;
@@ -65,6 +112,8 @@
 	justify-content: center;
 }
 
-svg, .ReactVirtualized__Table__sortableHeaderIcon {fill: #FFF}
+:global(.ReactVirtualized__Table__sortableHeaderIcon) {fill: #FFF}
 
-div, .ReactVirtualized__Table__Grid {outline: none}
+:global(.ReactVirtualized__Table__Grid) {outline: none}
+
+:global(.ReactVirtualized__Table__headerTruncatedText) {cursor: pointer}

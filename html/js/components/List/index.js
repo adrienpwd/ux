@@ -5,6 +5,7 @@ import {
 } from 'react-virtualized';
 import React, {PureComponent} from 'react';
 import {connect} from 'react-redux';
+import Icon from './../Icon';
 import {Map} from 'immutable';
 import {
 	fetchUsers,
@@ -78,8 +79,9 @@ export class MyList extends PureComponent {
 
 		return (
 			<div className={styles.listContainer}>
-				<div className={styles.checkboxesContainer}>
+				<div className={styles.controlsContainer}>
 					{this._renderFilter()}
+					{this._renderNbResults()}
 					{this._renderCheckboxes()}
 				</div>
 				<AutoSizer disableHeight={true}>
@@ -103,7 +105,8 @@ export class MyList extends PureComponent {
 									cellRenderer={this._renderFullProfilePic}
 									className={styles.column}
 									dataKey="picture"
-									label="Picture"
+									disableSort={true}
+									label=""
 									width={100} />}
 								{isActiveName && <Column
 									cellRenderer={this._renderFullName}
@@ -156,44 +159,56 @@ export class MyList extends PureComponent {
 	}
 
 	_renderFilter = () => {
-		const {
-			data,
-			queryString
-		} = this.props;
+		const {queryString} = this.props;
 
 		return (
 			<div>
+				<Icon
+					className={styles.searchIcon}
+					name="search" />
 				<input
 					className={styles.filterInput}
 					type="text"
 					name="name"
 					onChange={this._handleInputChange}
-					placeholder="Filter List"
 					value={queryString} />
-				<span>
-					{data.size} result(s)
-				</span>
 			</div>
 		);
 	};
 
 	_renderCheckboxes = () => {
 		const {activeColumns} = this.props;
-		const fields = ["picture", "name", "nat", "email", "cell", "phone", "location", "dob"];
+		const fields = ["Picture", "Name", "Nat", "Email", "Cell", "Phone", "Location", "Dob"];
 
 		return fields.map((field) => {
 			return (
-				<div key={field}>
+				<div
+				className={styles.checkboxContainer}
+				key={field}>
 					<input
-						checked={activeColumns.get(field)}
+						checked={activeColumns.get(field.toLowerCase())}
+						className={styles.checkboxContainerInput}
 						name={field}
 						onChange={this._handleCheckboxeChange}
 						type="checkbox"
 						value={field} />
-					{field}
+					<span className={styles.checkboxContainerLabel}>
+						{field}
+					</span>
 				</div>
 			);
 		});
+	};
+
+	_renderNbResults = () => {
+		const {data} = this.props;
+		const result = data && data.size > 1 ? "entries" : "entry";
+
+		return (
+			<span className={styles.nbResults}>
+				{data.size} {result}
+			</span>
+		);
 	};
 
 	_renderFullProfilePic = ({cellData}) => {
@@ -236,7 +251,8 @@ export class MyList extends PureComponent {
 
 	_handleCheckboxeChange = (event) => {
 		const {setActiveColumn} = this.props;
-		setActiveColumn(event.target.value);
+
+		setActiveColumn(event.target.value.toLowerCase());
 	};
 
 	_filterList = (queryString) => {
