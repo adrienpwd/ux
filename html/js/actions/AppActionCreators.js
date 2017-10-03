@@ -15,6 +15,13 @@ export const setQueryString = (queryString) => (
 	}
 );
 
+export const setActiveColumn = (field) => (
+	{
+		type: 'LIST_SET_ACTIVE_COLUMN',
+		payload: {field}
+	}
+);
+
 
 const fetchUsersRequest = (number) => fetch(`https://randomuser.me/api/?results=${number}`);
 

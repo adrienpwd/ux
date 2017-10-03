@@ -8,6 +8,7 @@ import {connect} from 'react-redux';
 import {Map} from 'immutable';
 import {
 	fetchUsers,
+	setActiveColumn,
 	setQueryString,
 	setSortBy
 } from './../../actions/AppActionCreators'
@@ -32,12 +33,13 @@ export class MyList extends PureComponent {
 		} = this.props;
 
 		if (!isFetchingUsers && !isFetchedUsers) {
-			fetchUsers(5000);
+			fetchUsers(15);
 		};
 	}
 
 	render () {
 		const {
+			activeColumns,
 			data,
 			fetchUsersError,
 			isFetchedUsers,
@@ -46,9 +48,19 @@ export class MyList extends PureComponent {
 			sortDirection
 		} = this.props;
 
+		const isActivePicture = activeColumns.get('picture');
+		const isActiveName = activeColumns.get('name');
+		const isActiveGender = activeColumns.get('gender');
+		const isActiveNat = activeColumns.get('nat');
+		const isActiveEmail = activeColumns.get('email');
+		const isActiveCell = activeColumns.get('cell');
+		const isActivePhone = activeColumns.get('phone');
+		const isActiveLocation = activeColumns.get('location');
+		const isActiveDob = activeColumns.get('dob');
+
 		if (fetchUsersError && fetchUsersError.length) {
 			return (
-				<div className={styles.spinnerContainer}>
+				<div className={styles.listContainer}>
 					{error}
 				</div>
 			);
@@ -56,18 +68,16 @@ export class MyList extends PureComponent {
 
 		if (!isFetchedUsers || isFetchingUsers) {
 			return (
-				<div className={styles.spinnerContainer}>
+				<div className={styles.listContainer}>
 					<MDSpinner
-						color1="#1A2327"
-						color2="#757b7d"
-						color3="#FFF"
+						className={styles.spinner}
 						size={150} />
 				</div>
 			);
 		};
 
 		return (
-			<div>
+			<div className={styles.listContainer}>
 				<div className={styles.checkboxesContainer}>
 					{this._renderFilter()}
 					{this._renderCheckboxes()}
@@ -89,46 +99,56 @@ export class MyList extends PureComponent {
 								sortBy={sortBy}
 								sortDirection={sortDirection}
 								width={width} >
-							<Column
-								cellRenderer={this._renderFullProfilePic}
-								className={styles.column}
-								dataKey="picture"
-								label="Picture"
-								width={100} />
-								<Column
+								{isActivePicture && <Column
+									cellRenderer={this._renderFullProfilePic}
+									className={styles.column}
+									dataKey="picture"
+									label="Picture"
+									width={100} />}
+								{isActiveName && <Column
 									cellRenderer={this._renderFullName}
 									className={styles.column}
 									dataKey="name"
 									label="Name"
-									width={200} />
-								<Column
+									width={200} />}
+								{isActiveGender && <Column
+									className={styles.column}
+									dataKey="gender"
+									label="Gender"
+									width={90} />}
+								{isActiveNat && <Column
 									className={styles.column}
 									dataKey="nat"
 									disableSort={true}
 									label="Nat."
-									width={80} />
-								<Column
+									width={80} />}
+								{isActiveEmail && <Column
 									className={styles.column}
 									dataKey="email"
 									label="E-mail"
-									width={260} />
-								<Column
+									width={260} />}
+								{isActiveCell && <Column
 									className={styles.column}
 									dataKey="cell"
+									label="Cell"
+									width={150} />}
+								{isActivePhone && <Column
+									className={styles.column}
+									dataKey="phone"
 									label="Phone"
-									width={150} />
-								<Column
+									width={150} />}
+								{isActiveLocation && <Column
 									cellRenderer={this._renderFullLocation}
 									className={styles.column}
 									dataKey="location"
 									label="Location"
-									width={450} />
-								<Column
+									width={450} />}
+								{isActiveDob && <Column
 									cellRenderer={this._renderDob}
 									className={styles.column}
 									dataKey="dob"
 									label="Born"
-									width={120} />
+									width={120} />}
 						</Table>}
 				</AutoSizer>
 			</div>
@@ -158,12 +178,14 @@ export class MyList extends PureComponent {
 	};
 
 	_renderCheckboxes = () => {
-		const fields = ["picture", "name", "nat", "email", "cell", "location", "dob"];
+		const {activeColumns} = this.props;
+		const fields = ["picture", "name", "nat", "email", "cell", "phone", "location", "dob"];
 
 		return fields.map((field) => {
 			return (
 				<div key={field}>
 					<input
+						checked={activeColumns.get(field)}
 						name={field}
 						onChange={this._handleCheckboxeChange}
 						type="checkbox"
@@ -213,7 +235,8 @@ export class MyList extends PureComponent {
 	};
 
 	_handleCheckboxeChange = (event) => {
-		console.log(event.target.value);
+		const {setActiveColumn} = this.props;
+		setActiveColumn(event.target.value);
 	};
 
 	_filterList = (queryString) => {
@@ -242,6 +265,7 @@ const mapStateToProps = (state) => ({
 		fetchUsersError: state.ListReducer.get('fetchUsersError'),
 		isFetchedUsers: state.ListReducer.get('isFetchedUsers'),
 		isFetchingUsers: state.ListReducer.get('isFetchingUsers'),
+		activeColumns: state.ListReducer.get('activeColumns'),
 		queryString: state.ListReducer.get('queryString', ''),
 		sortBy: state.ListReducer.get('sortBy', 'name'),
 		sortDirection: state.ListReducer.get('sortDirection', 'ASC')
@@ -250,6 +274,7 @@ const mapStateToProps = (state) => ({
 // All the Actions
 const mapDispatchToProps = {
 	fetchUsers,
+	setActiveColumn,
 	setQueryString,
 	setSortBy
 };

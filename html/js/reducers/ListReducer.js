@@ -9,14 +9,16 @@ const INITIAL_STATE = fromJS({
 	fetchUsersError: null,
 	isFetchingUsers: false,
 	isFetchedUsers: false,
-	lookupFields: {
+	activeColumns: {
+		picture: true,
+		name: true,
 		nat: true,
 		email: true,
-		name: true,
 		cell: true,
-		phone: true,
-		dob: true,
-		location: true
+		phone: false,
+		dob: false,
+		location: true,
+		gender: false
 	},
 	originalData: Map(),
 	queryString: "",
@@ -25,10 +27,11 @@ const INITIAL_STATE = fromJS({
 });
 
 const lookupFields = [
+	"name",
 	"nat",
 	"email",
-	"name",
 	"cell",
+	"phone",
 	"dob",
 	"location"
 ];
@@ -112,6 +115,11 @@ const onSetSortBy = (state, {sortBy, sortDirection}) => {
 	});
 };
 
+const onSetActiveColumn = (state, {field}) => {
+	const currentValue = state.getIn(['activeColumns', field]);
+	return state.setIn(['activeColumns', field], !currentValue);
+};
+
 const onFetchUsers = (state) => state.set('isFetchingUsers', true);
 
 const onFetchUsersSuccess = (state, {users}) => {
@@ -135,6 +143,9 @@ export const ListReducer = (state = INITIAL_STATE, action = {}) => {
 
 		case 'LIST_SET_SORT_BY':
 			return onSetSortBy(state, payload);
+
+		case 'LIST_SET_ACTIVE_COLUMN':
+			return onSetActiveColumn(state, payload);
 
 		case 'LIST_FETCH_USERS':
 			return onFetchUsers(state);
