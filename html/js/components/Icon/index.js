@@ -8,10 +8,9 @@ export default class Icon extends PureComponent {
 	render () {
 		const {
 			className,
-			name
+			name,
+			onClick
 		} = this.props;
-
-		console.log(className);
 
 		const classes = classnames(
 			styles.main,
@@ -20,6 +19,16 @@ export default class Icon extends PureComponent {
 
 		const IconSvg = require(`!!babel-loader!svg-react-loader!./../../icons/${name}.svg`);
 
-		return <IconSvg className={classes} />;
+		return (
+			<IconSvg
+				className={classes}
+				onClick={this._handleClick} />
+		);
 	}
+
+	_handleClick = () => {
+		const {onClick} = this.props;
+		if (typeof onClick !== 'function') return;
+		onClick();
+	};
 }

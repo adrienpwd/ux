@@ -22,6 +22,7 @@ const INITIAL_STATE = fromJS({
 	},
 	originalData: Map(),
 	queryString: "",
+	isSettingsOpen: false,
 	sortBy: "name",
 	sortDirection: "ASC"
 });
@@ -117,7 +118,14 @@ const onSetSortBy = (state, {sortBy, sortDirection}) => {
 
 const onSetActiveColumn = (state, {field}) => {
 	const currentValue = state.getIn(['activeColumns', field]);
+
 	return state.setIn(['activeColumns', field], !currentValue);
+};
+
+const onToggleSettings = (state) => {
+	const currentValue = state.get('isSettingsOpen');
+
+	return state.set('isSettingsOpen', !currentValue);
 };
 
 const onFetchUsers = (state) => state.set('isFetchingUsers', true);
@@ -137,6 +145,9 @@ export const ListReducer = (state = INITIAL_STATE, action = {}) => {
 	const {payload, type} = action;
 
 	switch (type) {
+		case 'LIST_TOGGLE_SETTINGS':
+			return onToggleSettings(state, payload);
+
 		case 'LIST_SET_QUERY_STRING':
 			return onSetQueryString(state, payload);
 

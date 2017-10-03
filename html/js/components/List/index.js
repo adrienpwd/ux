@@ -4,6 +4,8 @@ import {
 	Table
 } from 'react-virtualized';
 import React, {PureComponent} from 'react';
+import classnames from 'classnames';
+import {capitalizeFirst} from './../../utils/strings';
 import {connect} from 'react-redux';
 import Icon from './../Icon';
 import {Map} from 'immutable';
@@ -11,7 +13,8 @@ import {
 	fetchUsers,
 	setActiveColumn,
 	setQueryString,
-	setSortBy
+	setSortBy,
+	toggleSettings
 } from './../../actions/AppActionCreators'
 import MDSpinner from "react-md-spinner";
 import moment from 'moment';
@@ -22,6 +25,7 @@ const ROW_HEIGHT = 80;
 const NUMBER_OF_ROWS = 8;
 const LIST_HEIGHT = ROW_HEIGHT * NUMBER_OF_ROWS;
 const OVER_SCAN = 4;
+const FIELDS = ["Picture", "Name", "Gender", "Nat", "Email", "Cell", "Phone", "Location", "Dob"];
 
 export class MyList extends PureComponent {
 	static displayName = "List";
@@ -83,6 +87,7 @@ export class MyList extends PureComponent {
 					{this._renderFilter()}
 					{this._renderNbResults()}
 					{this._renderCheckboxes()}
+					{this._renderSettingsIcon()}
 				</div>
 				<AutoSizer disableHeight={true}>
 						{({width}) =>
@@ -112,11 +117,13 @@ export class MyList extends PureComponent {
 									cellRenderer={this._renderFullName}
 									className={styles.column}
 									dataKey="name"
+									headerRenderer={this._renderPeopleHeader}
 									label="Name"
 									width={200} />}
 								{isActiveGender && <Column
 									className={styles.column}
 									dataKey="gender"
+									headerRenderer={this._renderGenderHeader}
 									label="Gender"
 									width={90} />}
 								{isActiveNat && <Column
@@ -127,23 +134,27 @@ export class MyList extends PureComponent {
 									width={80} />}
 								{isActiveEmail && <Column
 									className={styles.column}
+									headerRenderer={this._renderEmailHeader}
 									dataKey="email"
 									label="E-mail"
 									width={260} />}
 								{isActiveCell && <Column
 									className={styles.column}
 									dataKey="cell"
+									headerRenderer={this._renderCellHeader}
 									label="Cell"
 									width={150} />}
 								{isActivePhone && <Column
 									className={styles.column}
 									dataKey="phone"
+									headerRenderer={this._renderPhoneHeader}
 									label="Phone"
 									width={150} />}
 								{isActiveLocation && <Column
 									cellRenderer={this._renderFullLocation}
 									className={styles.column}
 									dataKey="location"
+									headerRenderer={this._renderLocationHeader}
 									label="Location"
 									width={450} />}
 								{isActiveDob && <Column
@@ -158,8 +169,24 @@ export class MyList extends PureComponent {
 		);
 	}
 
+	_renderPeopleHeader = () => <Icon className={styles.icon} name="people" />;
+
+	_renderEmailHeader = () => <Icon className={styles.icon} name="email" />;
+
+	_renderGenderHeader = () => "M/F";
+
+	_renderCellHeader = () => <Icon className={styles.icon} name="cell" />;
+
+	_renderPhoneHeader = () => <Icon className={styles.icon} name="phone" />;
+
+	_renderLocationHeader = () => <Icon className={styles.icon} name="location" />;
+
 	_renderFilter = () => {
 		const {queryString} = this.props;
+		const filterInputClasses = classnames(
+			styles.filterInput,
+			queryString && queryString.length ? styles.filterInputActive : null
+		);
 
 		return (
 			<div>
@@ -167,7 +194,7 @@ export class MyList extends PureComponent {
 					className={styles.searchIcon}
 					name="search" />
 				<input
-					className={styles.filterInput}
+					className={filterInputClasses}
 					type="text"
 					name="name"
 					onChange={this._handleInputChange}
@@ -177,14 +204,27 @@ export class MyList extends PureComponent {
 	};
 
 	_renderCheckboxes = () => {
-		const {activeColumns} = this.props;
-		const fields = ["Picture", "Name", "Nat", "Email", "Cell", "Phone", "Location", "Dob"];
+		const {
+			activeColumns,
+			isSettingsOpen
+		} = this.props;
 
-		return fields.map((field) => {
+		const checkboxContainerClasses = classnames(
+			styles.checkboxContainer,
+			isSettingsOpen ? styles.checkboxContainerActive : null
+		);
+
+		const checkboxes = FIELDS.map((field) => {
+
+			const checkboxContainerLabelClasses = classnames(
+				styles.checkboxContainerLabel,
+				activeColumns.get(field.toLowerCase()) ? styles.checkboxContainerLabelActive : null
+			);
+
 			return (
 				<div
-				className={styles.checkboxContainer}
-				key={field}>
+					className={styles.checkbox}
+					key={field}>
 					<input
 						checked={activeColumns.get(field.toLowerCase())}
 						className={styles.checkboxContainerInput}
@@ -192,12 +232,38 @@ export class MyList extends PureComponent {
 						onChange={this._handleCheckboxeChange}
 						type="checkbox"
 						value={field} />
-					<span className={styles.checkboxContainerLabel}>
+					<span className={checkboxContainerLabelClasses}>
 						{field}
 					</span>
 				</div>
 			);
 		});
+
+		return (
+			<div className={checkboxContainerClasses}>
+				{checkboxes}
+			</div>
+		);
+	};
+
+	_renderSettingsIcon = () => {
+		const {
+			activeColumns,
+			isSettingsOpen,
+			toggleSettings
+		} = this.props;
+
+		const iconClasses = classnames(
+			styles.settingsIcon,
+			isSettingsOpen ? styles.settingsIconActive : null
+		);
+
+		return (
+			<Icon
+				className={iconClasses}
+				name="settings"
+				onClick={toggleSettings} />
+		);
 	};
 
 	_renderNbResults = () => {
@@ -222,24 +288,23 @@ export class MyList extends PureComponent {
 		);
 	};
 
-	_renderFullName = ({cellData}) => `${cellData.get('title')} ${cellData.get('first')} ${cellData.get('last')}`
+	_renderFullName = ({cellData}) => {
+		const title = capitalizeFirst(cellData.get('title'));
+		const first = capitalizeFirst(cellData.get('first'));
+		const last = capitalizeFirst(cellData.get('last'));
+		const name = `${title} ${first} ${last}`;
+
+		return name;
+	}
 
 	_renderFullLocation = ({cellData}) => {
-		const street = this._getStreet(cellData);
-		const city = this._getCity(cellData);
-		const postalCode = this._getPostCode(cellData);
-		const state = this._getState(cellData);
+		const street = capitalizeFirst(cellData.get('street', ""));
+		const city = capitalizeFirst(cellData.get('city', ""));
+		const postcode = capitalizeFirst(cellData.get('postcode', ""));
+		const state = capitalizeFirst(cellData.get('state', ""));
 
-		return `${street} ${city} ${postalCode} ${state}`;
+		return `${street} ${city} ${postcode} ${state}`;
 	};
-
-	_getStreet = (cellData) => cellData.get('street');
-
-	_getCity = (cellData) => cellData.get('city');
-
-	_getPostCode = (cellData) => cellData.get('postcode');
-
-	_getState = (cellData) => cellData.get('state');
 
 	_renderDob = ({cellData}) => moment(cellData).format('YYYY-MM-DD');
 
@@ -275,24 +340,24 @@ export class MyList extends PureComponent {
 
 }
 
-// Setting up the props that come from reducers through connect
 const mapStateToProps = (state) => ({
-		data: state.ListReducer.get('data', Map()),
-		fetchUsersError: state.ListReducer.get('fetchUsersError'),
-		isFetchedUsers: state.ListReducer.get('isFetchedUsers'),
-		isFetchingUsers: state.ListReducer.get('isFetchingUsers'),
-		activeColumns: state.ListReducer.get('activeColumns'),
-		queryString: state.ListReducer.get('queryString', ''),
-		sortBy: state.ListReducer.get('sortBy', 'name'),
-		sortDirection: state.ListReducer.get('sortDirection', 'ASC')
+	activeColumns: state.ListReducer.get('activeColumns'),
+	data: state.ListReducer.get('data', Map()),
+	fetchUsersError: state.ListReducer.get('fetchUsersError'),
+	isFetchedUsers: state.ListReducer.get('isFetchedUsers'),
+	isFetchingUsers: state.ListReducer.get('isFetchingUsers'),
+	isSettingsOpen: state.ListReducer.get('isSettingsOpen'),
+	queryString: state.ListReducer.get('queryString', ''),
+	sortBy: state.ListReducer.get('sortBy', 'name'),
+	sortDirection: state.ListReducer.get('sortDirection', 'ASC')
 });
 
-// All the Actions
 const mapDispatchToProps = {
 	fetchUsers,
 	setActiveColumn,
 	setQueryString,
-	setSortBy
+	setSortBy,
+	toggleSettings
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(MyList);

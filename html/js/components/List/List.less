@@ -18,15 +18,20 @@
 	height: 24px;
 	margin: 0 8px 0 0;
 	outline: none;
-	padding-left: 24px;
+	padding-left: 30px;
 	width: 200px;
-
-	transition: border-color 0.4s ease;
+	transition: border-color 0.2s ease;
 
 	&:focus {
 		border-color: @electricBlue
 	}
 }
+
+.icon {
+	fill: #FFF;
+}
+
+.filterInputActive {border-color: @electricBlue}
 
 .searchIcon {
 	fill: #FFF;
@@ -34,14 +39,37 @@
 	left: 24px;
 }
 
+.settingsIcon {
+	cursor: pointer;
+	fill: #FFF;
+	position: absolute;
+  right: 16px;
+	transition: fill 0.2s ease;
+
+	&Active {fill: @electricBlue}
+
+	&:hover {fill: @electricBlue}
+}
+
 .nbResults {
 	font-size: 12px;
 	font-weight: 100;
-	margin-right: 8px;
+	margin-top: 12px;
+}
+
+.checkbox {
+	display: flex;;
 }
 
 .checkboxContainer {
+	display: flex;
 	margin: 0 8px;
+	min-height: 20px;
+	overflow: hidden;
+	position: absolute;
+	right: 48px;
+	width: 0px;
+	transition: width 0.4s ease;
 
 	&Input {
 		cursor: pointer;
@@ -49,9 +77,19 @@
 	}
 
 	&Label {
+		color: #FFF;
 		font-size: 14px;
-		font-weight: 100
+		font-weight: 100;
+		margin-right: 8px;
 	}
+
+	&LabelActive {
+		color: @electricBlue;
+	}
+}
+
+.checkboxContainerActive {
+	width: 500px;
 }
 
 .evenRow {
@@ -66,6 +104,7 @@
 
 .headerColumn {
 	align-items: center;
+	cursor: pointer;
 	display: flex;
 	font-weight: 100;
 	outline: none;
@@ -112,8 +151,8 @@
 	justify-content: center;
 }
 
-:global(.ReactVirtualized__Table__sortableHeaderIcon) {fill: #FFF}
+:global(.ReactVirtualized__Table__sortableHeaderIcon) {
+	fill: @electricBlue;
+}
 
 :global(.ReactVirtualized__Table__Grid) {outline: none}
-
-:global(.ReactVirtualized__Table__headerTruncatedText) {cursor: pointer}

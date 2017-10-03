@@ -1,3 +1,10 @@
+export const toggleSettings = (isOpen) => (
+	{
+		type: 'LIST_TOGGLE_SETTINGS',
+		payload: {isOpen}
+	}
+);
+
 export const setSortBy = (sortBy, sortDirection) => (
 	{
 		type: 'LIST_SET_SORT_BY',
