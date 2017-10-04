@@ -19,7 +19,8 @@
 	margin: 0 8px 0 0;
 	outline: none;
 	padding-left: 30px;
-	width: 200px;
+	padding-right: 24px;
+	width: 150px;
 	transition: border-color 0.2s ease;
 
 	&:focus {
@@ -28,8 +29,14 @@
 }
 
 .icon {
+	cursor: pointer;
 	fill: #FFF;
+	transition: fill 0.2s ease;
+
+	&:hover {fill: @electricBlue}
 }
+
+.iconSorted {fill: @electricBlue}
 
 .filterInputActive {border-color: @electricBlue}
 
@@ -41,14 +48,15 @@
 
 .settingsIcon {
 	cursor: pointer;
-	fill: #FFF;
 	position: absolute;
   right: 16px;
-	transition: fill 0.2s ease;
 
 	&Active {fill: @electricBlue}
+}
 
-	&:hover {fill: @electricBlue}
+.clearIcon {
+	position: relative;
+  right: 26px;
 }
 
 .nbResults {
@@ -59,6 +67,10 @@
 
 .checkbox {
 	display: flex;;
+}
+
+#element::-webkit-scrollbar {
+    display: none;
 }
 
 .checkboxContainer {
@@ -94,11 +106,13 @@
 
 .evenRow {
 	background-color: #dadbdb;
+	box-shadow: 1px 1px 1px #aeafaf;
 	color: #1A2327;
 }
 
 .oddRow {
   background-color: #e8e9e9;
+	box-shadow: 1px 1px 1px #b9baba;
 	color: #1A2327;
 }
 
@@ -119,11 +133,18 @@
 }
 
 .row {
+	cursor: pointer;
 	display: flex;
 	font-size: 14px;
 	max-height: 75px;
 	margin-bottom: 4px;
 	padding-right: 0 !important;
+
+	&:hover {
+		box-shadow: 1px 1px 1px #5b5e6a;
+		background-color: #333645;
+		color: #e8e9e9;
+	}
 }
 
 .column {

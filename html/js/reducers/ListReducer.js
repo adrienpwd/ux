@@ -82,11 +82,17 @@ const sortList = (list, sortBy, sortDirection) => {
 		case "name":
 			sortedList = list.sortBy(record => record.getIn(['name', 'last']));
 			return updateList(sortedList, sortDirection);
+		case "gender":
+			sortedList = list.sortBy(record => record.get('gender'));
+			return updateList(sortedList, sortDirection);
 		case "email":
 			sortedList = list.sortBy(record => record.get('email'));
 			return updateList(sortedList, sortDirection);
 		case "cell":
 			sortedList = list.sortBy(record => record.get('cell'));
+			return updateList(sortedList, sortDirection);
+		case "phone":
+			sortedList = list.sortBy(record => record.get('phone'));
 			return updateList(sortedList, sortDirection);
 		case "location":
 			sortedList = list.sortBy(record => record.getIn(['location', 'city']));
@@ -99,7 +105,9 @@ const sortList = (list, sortBy, sortDirection) => {
 	};
 };
 
-const updateList = (list, sortDirection) => list.update((myList) => (sortDirection === "DESC" ? myList.reverse() : myList));
+const updateList = (list, sortDirection) => {
+	return list.update((myList) => (sortDirection === "DESC" ? myList.reverse() : myList));
+};
 
 const onSetQueryString = (state, {queryString}) => {
 	return state.merge({
@@ -131,6 +139,7 @@ const onToggleSettings = (state) => {
 const onFetchUsers = (state) => state.set('isFetchingUsers', true);
 
 const onFetchUsersSuccess = (state, {users}) => {
+	console.log(users);
 	return state.merge({
 		data: sortList(fromJS(users), "name", "ASC"),
 		originalData: fromJS(users),

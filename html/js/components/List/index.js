@@ -23,7 +23,7 @@ import styles from './List.less';
 const HEADER_HEIGHT = 40;
 const ROW_HEIGHT = 80;
 const NUMBER_OF_ROWS = 8;
-const LIST_HEIGHT = ROW_HEIGHT * NUMBER_OF_ROWS;
+const LIST_HEIGHT = ROW_HEIGHT * NUMBER_OF_ROWS + HEADER_HEIGHT;
 const OVER_SCAN = 4;
 const FIELDS = ["Picture", "Name", "Gender", "Nat", "Email", "Cell", "Phone", "Location", "Dob"];
 
@@ -169,17 +169,68 @@ export class MyList extends PureComponent {
 		);
 	}
 
-	_renderPeopleHeader = () => <Icon className={styles.icon} name="people" />;
+	_renderPeopleHeader = () => (
+		<div>
+			<Icon className={styles.icon} name="people" />
+			{this._getSortIcon("name")}
+		</div>
+	);
 
-	_renderEmailHeader = () => <Icon className={styles.icon} name="email" />;
+	_renderEmailHeader = () => (
+		<div>
+			<Icon className={styles.icon} name="email" />
+			{this._getSortIcon("email")}
+		</div>
+	);
 
-	_renderGenderHeader = () => "M/F";
+	_renderGenderHeader = () => {
+		const {
+			sortBy,
+			sortDirection
+		} = this.props;
 
-	_renderCellHeader = () => <Icon className={styles.icon} name="cell" />;
+		const isSorted = sortBy === "gender";
+		if (!isSorted) return "M/F";
 
-	_renderPhoneHeader = () => <Icon className={styles.icon} name="phone" />;
+		return sortDirection === "ASC" ? "F->M" : "M->F";
+	};
 
-	_renderLocationHeader = () => <Icon className={styles.icon} name="location" />;
+	_renderCellHeader = () => (
+		<div>
+			<Icon className={styles.icon} name="cell" />
+			{this._getSortIcon("cell")}
+		</div>
+	);
+
+	_renderPhoneHeader = () => (
+		<div>
+			<Icon className={styles.icon} name="phone" />
+			{this._getSortIcon("phone")}
+		</div>
+	);
+
+	_renderLocationHeader = () => (
+		<div>
+			<Icon className={styles.icon} name="location" />
+			{this._getSortIcon("location")}
+		</div>
+	);
+
+	_getSortIcon = (header) => {
+		const {
+			sortBy,
+			sortDirection
+		} = this.props;
+
+		const isSorted = sortBy === header;
+		const arrow = sortDirection === "ASC" ? "arrow_up" : "arrow_down";
+
+		if (isSorted) {
+			return <Icon className={styles.iconSorted} name={`${arrow}`} />;
+		}
+
+		return null;
+	};
 
 	_renderFilter = () => {
 		const {queryString} = this.props;
@@ -199,6 +250,10 @@ export class MyList extends PureComponent {
 					name="name"
 					onChange={this._handleInputChange}
 					value={queryString} />
+					{queryString && queryString.length && <Icon
+						className={[styles.icon, styles.clearIcon]}
+						name="clear"
+						onClick={this._clearQueryString} />}
 			</div>
 		);
 	};
@@ -254,6 +309,7 @@ export class MyList extends PureComponent {
 		} = this.props;
 
 		const iconClasses = classnames(
+			styles.icon,
 			styles.settingsIcon,
 			isSettingsOpen ? styles.settingsIconActive : null
 		);
@@ -320,10 +376,10 @@ export class MyList extends PureComponent {
 		setActiveColumn(event.target.value.toLowerCase());
 	};
 
-	_filterList = (queryString) => {
-		const {filterList} = this.props;
+	_clearQueryString = () => {
+		const {setQueryString} = this.props;
 
-		filterList(queryString);
+		setQueryString("");
 	};
 
 	_setRowClassName({index}) {
