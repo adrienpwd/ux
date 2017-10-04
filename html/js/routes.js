@@ -8,14 +8,16 @@ import Components from './views/Components';
 import Home from './views/Home';
 import MyList from './components/List';
 import MyProfilePic from './views/Components/ProfilePic';
-import Nav from './components/Nav';
+import MyIcons from './views/Components/Icons';
+import Nav from './views/Nav';
 import styles from './AppStyles.less'
 
 export const routeCodes = {
 	ROOT: "/",
 	COMPONENTS: "/components",
 	LIST: "/components/list",
-	PROFILEPIC: "/components/profilePicture"
+	PROFILEPIC: "/components/profilePicture",
+	ICONS: "/components/icons"
 };
 
 class Routes extends PureComponent {
@@ -32,6 +34,7 @@ class Routes extends PureComponent {
 						<Route component={Components} path={routeCodes.COMPONENTS} />
 						<Route component={MyList} path={routeCodes.LIST} />
 						<Route component={MyProfilePic} path={routeCodes.PROFILEPIC} />
+						<Route component={MyIcons} path={routeCodes.ICONS} />
 					</div>
 				</div>
 			</Router>

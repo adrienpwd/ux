@@ -10,6 +10,7 @@ export default class ProfilePic extends PureComponent {
 			circle,
 			className,
 			height,
+			size,
 			src,
 			style,
 			width
