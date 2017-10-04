@@ -2,6 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 
 module.exports = {
+	devtool: 'cheap-module-source-map',
 	context: __dirname,
 	entry: path.resolve(__dirname, './html/js/main.js'),
 	output: {

@@ -39,7 +39,7 @@ export class MyList extends PureComponent {
 		} = this.props;
 
 		if (!isFetchingUsers && !isFetchedUsers) {
-			fetchUsers(500);
+			fetchUsers(5000);
 		};
 	}
 
