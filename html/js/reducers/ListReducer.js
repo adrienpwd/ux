@@ -40,8 +40,6 @@ const lookupFields = [
 const filterList = (list, queryString) => {
 	let filteredList = List();
 
-	if (queryString && queryString.length === 0) return state.get('originalData');
-
 	if (queryString && queryString.length) {
 		list.forEach((record) => {
 			lookupFields.some((field) => {
@@ -110,10 +108,17 @@ const updateList = (list, sortDirection) => {
 };
 
 const onSetQueryString = (state, {queryString}) => {
-	return state.merge({
-		data: filterList(state.get('originalData'), queryString),
-		queryString
-	});
+	if (queryString.length === 0) {
+		return state.merge({
+			data: sortList(state.get('originalData'), state.get('sortBy'), state.get('sortDirection')),
+			queryString: ""
+		});
+	} else {
+		return state.merge({
+			data: filterList(state.get('originalData'), queryString),
+			queryString
+		});
+	};
 };
 
 const onSetSortBy = (state, {sortBy, sortDirection}) => {
@@ -139,10 +144,9 @@ const onToggleSettings = (state) => {
 const onFetchUsers = (state) => state.set('isFetchingUsers', true);
 
 const onFetchUsersSuccess = (state, {users}) => {
-	console.log(users);
 	return state.merge({
 		data: sortList(fromJS(users), "name", "ASC"),
-		originalData: fromJS(users),
+		originalData: sortList(fromJS(users), "name", "ASC"),
 		isFetchingUsers: false,
 		isFetchedUsers: true
 	});
