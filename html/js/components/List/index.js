@@ -112,6 +112,7 @@ export class MyList extends PureComponent {
 									dataKey="picture"
 									disableSort={true}
 									label=""
+									minWidth={68}
 									width={100} />}
 								{isActiveName && <Column
 									cellRenderer={this._renderFullName}
@@ -119,6 +120,7 @@ export class MyList extends PureComponent {
 									dataKey="name"
 									headerRenderer={this._renderPeopleHeader}
 									label="Name"
+									minWidth={110}
 									width={200} />}
 								{isActiveGender && <Column
 									className={styles.column}
@@ -130,26 +132,30 @@ export class MyList extends PureComponent {
 									className={styles.column}
 									dataKey="nat"
 									disableSort={true}
-									label="Nat."
-									width={80} />}
+									headerRenderer={this._renderNatHeader}
+									minWidth={60}
+									width={60} />}
 								{isActiveEmail && <Column
 									className={styles.column}
 									headerRenderer={this._renderEmailHeader}
 									dataKey="email"
 									label="E-mail"
+									minWidth={200}
 									width={260} />}
 								{isActiveCell && <Column
 									className={styles.column}
 									dataKey="cell"
 									headerRenderer={this._renderCellHeader}
 									label="Cell"
-									width={150} />}
+									minWidth={120}
+									width={120} />}
 								{isActivePhone && <Column
 									className={styles.column}
 									dataKey="phone"
 									headerRenderer={this._renderPhoneHeader}
 									label="Phone"
-									width={150} />}
+									minWidth={120}
+									width={120} />}
 								{isActiveLocation && <Column
 									cellRenderer={this._renderFullLocation}
 									className={styles.column}
@@ -199,6 +205,13 @@ export class MyList extends PureComponent {
 		<div>
 			<Icon className={styles.icon} name="cell" />
 			{this._getSortIcon("cell")}
+		</div>
+	);
+
+	_renderNatHeader = () => (
+		<div>
+			<Icon className={styles.icon} name="flag" />
+			{this._getSortIcon("nat")}
 		</div>
 	);
 

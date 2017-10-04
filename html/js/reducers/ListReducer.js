@@ -12,7 +12,7 @@ const INITIAL_STATE = fromJS({
 	activeColumns: {
 		picture: true,
 		name: true,
-		nat: true,
+		nat: false,
 		email: true,
 		cell: true,
 		phone: false,
