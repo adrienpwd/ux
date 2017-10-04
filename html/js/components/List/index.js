@@ -18,6 +18,7 @@ import {
 } from './../../actions/AppActionCreators'
 import MDSpinner from "react-md-spinner";
 import moment from 'moment';
+import ProfilePic from './../ProfilePic'
 import styles from './List.less';
 
 const HEADER_HEIGHT = 40;
@@ -38,7 +39,7 @@ export class MyList extends PureComponent {
 		} = this.props;
 
 		if (!isFetchingUsers && !isFetchedUsers) {
-			fetchUsers(15);
+			fetchUsers(500);
 		};
 	}
 
@@ -231,6 +232,7 @@ export class MyList extends PureComponent {
 
 	_getSortIcon = (header) => {
 		const {
+			queryString,
 			sortBy,
 			sortDirection
 		} = this.props;
@@ -238,7 +240,7 @@ export class MyList extends PureComponent {
 		const isSorted = sortBy === header;
 		const arrow = sortDirection === "ASC" ? "arrow_up" : "arrow_down";
 
-		if (isSorted) {
+		if (!queryString && isSorted) {
 			return <Icon className={styles.iconSorted} name={`${arrow}`} />;
 		}
 
@@ -348,12 +350,11 @@ export class MyList extends PureComponent {
 
 	_renderFullProfilePic = ({cellData}) => {
 		return (
-				<img
-					className={styles.profilePic}
-					src={`${cellData.get('medium')}`}
-					alt="profile picture"
-					height={"68"}
-					width={"68"} />
+			<ProfilePic
+				src={`${cellData.get('medium')}`}
+				alt="profile picture"
+				height={"68"}
+				width={"68"} />
 		);
 	};
 

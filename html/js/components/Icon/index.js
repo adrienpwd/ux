@@ -17,6 +17,7 @@ export default class Icon extends PureComponent {
 			className
 		);
 
+		if (!name) return <span>empty</span>;
 		const IconSvg = require(`!!babel-loader!svg-react-loader!./../../icons/${name}.svg`);
 
 		return (

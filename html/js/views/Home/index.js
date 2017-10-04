@@ -6,7 +6,9 @@ export default class Home extends PureComponent {
 	render () {
 		return (
 			<div>
-				Home
+				<p>
+					Here is the begining of library of web components written with React JS.
+				</p>
 			</div>
 		);
 	}

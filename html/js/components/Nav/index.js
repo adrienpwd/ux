@@ -11,7 +11,7 @@ export default class Bar extends PureComponent {
 		return (
 			<div className={styles.bar}>
 				<Link className={styles.link} to={routeCodes.ROOT}>Home</Link>
-				<Link className={styles.link} to={routeCodes.COMPONENTS}>Components</Link>
+				<Link className={styles.link} to={routeCodes.LIST}>Components</Link>
 			</div>
 		);
 	}

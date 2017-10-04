@@ -7,13 +7,15 @@ import React, {PureComponent} from 'react';
 import Components from './views/Components';
 import Home from './views/Home';
 import MyList from './components/List';
+import MyProfilePic from './views/Components/ProfilePic';
 import Nav from './components/Nav';
 import styles from './AppStyles.less'
 
 export const routeCodes = {
 	ROOT: "/",
 	COMPONENTS: "/components",
-	LIST: "/components/list"
+	LIST: "/components/list",
+	PROFILEPIC: "/components/profilePicture"
 };
 
 class Routes extends PureComponent {
@@ -29,6 +31,7 @@ class Routes extends PureComponent {
 						<Route component={Home} exact path={routeCodes.ROOT} />
 						<Route component={Components} path={routeCodes.COMPONENTS} />
 						<Route component={MyList} path={routeCodes.LIST} />
+						<Route component={MyProfilePic} path={routeCodes.PROFILEPIC} />
 					</div>
 				</div>
 			</Router>

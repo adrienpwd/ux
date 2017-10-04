@@ -8,7 +8,13 @@ export default class Components extends PureComponent {
 	render () {
 		return (
 			<div className={styles.componentsContainer}>
-				<Link to="/components/list">List</Link>
+				<h4>Avalaible components:</h4>
+				<Link
+					className={styles.componentsTitle}
+					to="/components/list">List</Link>
+				<Link
+					className={styles.componentsTitle}
+					to="/components/profilePicture">Profile Picture</Link>
 			</div>
 		);
 	}
