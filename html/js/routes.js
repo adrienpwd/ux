@@ -14,10 +14,10 @@ import styles from './AppStyles.less'
 
 export const routeCodes = {
 	ROOT: "/",
-	COMPONENTS: "/components",
-	LIST: "/components/list",
-	PROFILEPIC: "/components/profilePicture",
-	ICONS: "/components/icons"
+	COMPONENTS: "/",
+	LIST: "/list",
+	PROFILEPIC: "/profilePicture",
+	ICONS: "/icons"
 };
 
 class Routes extends PureComponent {
@@ -25,16 +25,13 @@ class Routes extends PureComponent {
 	static displayName="Routes";
 
 	render () {
+		// <Route component={Home} exact path={routeCodes.ROOT} />
 		return (
 			<Router>
 				<div className={styles.appContainer}>
 					<Nav />
 					<div className={styles.bodyContainer}>
-						<Route component={Home} exact path={routeCodes.ROOT} />
-						<Route component={Components} path={routeCodes.COMPONENTS} />
-						<Route component={MyList} path={routeCodes.LIST} />
-						<Route component={MyProfilePic} path={routeCodes.PROFILEPIC} />
-						<Route component={MyIcons} path={routeCodes.ICONS} />
+						<Route component={MyList} path={routeCodes.ROOT} />
 					</div>
 				</div>
 			</Router>

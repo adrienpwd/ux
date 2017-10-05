@@ -3,24 +3,31 @@ const webpack = require('webpack');
 
 module.exports = {
 	devtool: 'cheap-module-source-map',
-	context: __dirname,
-	entry: path.resolve(__dirname, './html/js/main.js'),
+	entry: './html/js/main.js',
 	output: {
 		filename: 'app.bundle.js',
-		path: path.resolve(__dirname, './dist/assets'),
-		publicPath: '/assets'
+		path: path.resolve(__dirname, 'dist'),
+		publicPath: '/dist/'
 	},
 	devServer: {
-		contentBase: path.resolve(__dirname, './html')
+		historyApiFallback:{
+			index:'./public_html/index.html'
+		}
 	},
+	plugins: [
+	  new webpack.DefinePlugin({
+	    'process.env': {
+	      'NODE_ENV': JSON.stringify('production')
+	    }
+	  })
+	],
 	module: {
 		rules: [
 			{
 				loader: 'babel-loader',
 				test: /\.js$/,
 				exclude: [
-					/node_modules/,
-					path.resolve(__dirname, "html", "js", "versions")
+					/node_modules/
 				]
 			}, {
 				loader: 'json-loader',
@@ -32,8 +39,8 @@ module.exports = {
 					{
 						loader: 'css-loader',
 						options: {importLoaders: 1,
-							modules: true
-						}
+						modules: true
+					}
 					},
 					'less-loader'
 				]
@@ -50,6 +57,6 @@ module.exports = {
 		]
 	},
 	resolve: {
-		modules: [path.resolve(__dirname, "src"), "node_modules"]
+		modules: ["node_modules"]
 	}
 };
